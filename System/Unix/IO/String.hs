@@ -1,15 +1,19 @@
+{-# language MultiParamTypeClasses, FlexibleInstances #-}
 module System.Unix.IO.String where
 
-import System.Unix.IO.ByteString
-import System.Posix.Types
-import Data.ByteString.Char8 as B
+import System.Unix.ByteString.Class
+import System.Unix.IO.Text
+
+import Control.Monad.IO.Class
+import qualified Data.Text as T
+
+instance MonadIO io => FromByteString io String where
+  fromByteString = fmap T.unpack . liftIO . toUnicode
+
+instance MonadIO io => ToByteString io String where 
+  toByteString = liftIO . fromUnicode . T.pack
+
+instance MonadIO io => IsByteString io String
 
 
-fdGetContentsS :: Fd -> IO String
-fdGetContentsS = fmap B.unpack . fdGetContentsB
 
-fdGetLineS :: Fd -> IO String
-fdGetLineS = fmap B.unpack . fdGetLineB
-
-fdPutS :: Fd -> String -> IO ()
-fdPutS fd = fdPutB fd . B.pack

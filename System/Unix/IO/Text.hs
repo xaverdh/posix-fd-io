@@ -1,47 +1,45 @@
+{-# language MultiParamTypeClasses, FlexibleInstances #-}
 module System.Unix.IO.Text where
 
+import System.Unix.ByteString.Class
+
 import Data.Functor.Identity
-import Control.Monad
-import System.Posix.Types
-import System.Unix.IO.ByteString
+import Control.Monad.IO.Class
 
 import qualified Data.Text.ICU.Convert as U
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LT
 import qualified Data.ByteString as B
+import qualified Data.Text.Lazy as LT
+import qualified Data.ByteString.Lazy as LB
 
-fdGetContentsT :: Fd -> IO T.Text
-fdGetContentsT fd =
-  toUnicode =<< fdGetContentsB fd
 
-fdGetLineT :: Fd -> IO T.Text
-fdGetLineT fd =
-  toUnicode =<< fdGetLineB fd
+instance MonadIO io => FromByteString io T.Text where
+  fromByteString = liftIO . toUnicode
 
-fdPutT :: Fd -> T.Text -> IO ()
-fdPutT fd text = do
-  bs <- fromUnicode text
-  fdPutB fd bs
+instance MonadIO io => ToByteString io T.Text where
+  toByteString = liftIO . fromUnicode
 
-fdGetContentsLT :: Fd -> IO LT.Text
-fdGetContentsLT fd = do
-  bs's <- fdGetContentsByteStrings fd
-  LT.fromChunks <$> mapM toUnicode bs's
+instance MonadIO io => IsByteString io T.Text
 
-fdGetLineLT :: Fd -> IO LT.Text
-fdGetLineLT fd = do
-  bs's <- fdGetLineByteStrings fd
-  LT.fromChunks <$> mapM toUnicode bs's
 
-fdPutLT :: Fd -> LT.Text -> IO ()
-fdPutLT fd bs = do
-  text's <- fromUnicodef $ LT.toChunks bs
-  -- For performance reasons we use fromUnicodef
-  --  instead of reapeated application of fromUnicode.
-  forM_ text's $ fdPutB fd
+instance MonadIO io => FromLazyByteString io LT.Text where
+  fromLazyByteString bs = LT.fromChunks
+    <$> liftIO (toUnicodef $ LB.toChunks bs)
+  -- ^ For performance reasons we use fromUnicodef
+  --   instead of reapeated application of fromUnicode.
+
+instance MonadIO io => ToLazyByteString io LT.Text where
+  toLazyByteString txt = LB.fromChunks
+    <$> liftIO (fromUnicodef $ LT.toChunks txt)
+  -- ^ For performance reasons we use fromUnicodef
+  --   instead of reapeated application of fromUnicode.
+
+instance MonadIO io => IsLazyByteString io LT.Text
+
 
 
 -- Todo: investigate proper use of the "fallback" argument to the ICU open function
+
 
 -- | Decode 'B.ByteString' using the local(e) encoding.
 --   On most modern unix systems this will likely be utf8.
