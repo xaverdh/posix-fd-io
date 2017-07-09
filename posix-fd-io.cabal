@@ -17,6 +17,11 @@ library
   exposed-modules:     System.Unix.ByteString.Class System.Unix.IO, System.Unix.IO.Lazy System.Unix.IO.String, System.Unix.IO.Text, System.Unix.IO.ByteString
   -- other-modules:       
   other-extensions:    FlexibleInstances
-  build-depends:       base >=4.9 && <4.10, text >=1.2 && <1.3, bytestring >=0.10 && <0.11, text-icu >=0.7 && <0.8, word8 >=0.1 && <0.2, unix-bytestring >= 0.3.7 && < 0.4
+  build-depends:       base >=4.9 && <4.10
+  build-depends:       text >=1.2 && <1.3
+  build-depends:       bytestring >=0.10 && <0.11
+  build-depends:       text-icu >=0.7 && <0.8
+  build-depends:       word8 >=0.1 && <0.2
+  build-depends:       unix-bytestring >= 0.3.7 && < 0.4
   -- hs-source-dirs:      
   default-language:    Haskell2010
