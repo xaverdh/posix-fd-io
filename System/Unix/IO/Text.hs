@@ -6,8 +6,9 @@ import System.Unix.ByteString.Class
 import Data.Functor.Identity
 import Control.Monad.IO.Class
 
-import qualified Data.Text.ICU.Convert as U
+-- import qualified Data.Text.ICU.Convert as U
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as TEnc
 import qualified Data.ByteString as B
 import qualified Data.Text.Lazy as LT
 import qualified Data.ByteString.Lazy as LB
@@ -58,14 +59,12 @@ fromUnicode =
 -- | Functor version of 'toUnicode'.
 toUnicodef :: Functor f => f B.ByteString -> IO (f T.Text)
 toUnicodef fbs = do
-  converter <- U.open ""{-Use Default Encoding-} Nothing{-?-}
-  return $ fmap (U.toUnicode converter) fbs
+  return $ fmap TEnc.decodeUtf8 fbs
 
 -- | Functor version of fromUnicode'.
 fromUnicodef :: Functor f => f T.Text -> IO (f B.ByteString)
 fromUnicodef ftext = do
-  converter <- U.open ""{-Use Default Encoding-} Nothing{-?-}
-  return $ fmap (U.fromUnicode converter) ftext
+  return $ fmap TEnc.encodeUtf8 ftext
 
 
 

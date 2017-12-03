@@ -17,8 +17,8 @@ library
   exposed-modules:     System.Unix.ByteString.Class
   exposed-modules:     System.Unix.IO
   exposed-modules:     System.Unix.IO.Lazy
-  -- exposed-modules:     System.Unix.IO.String
-  -- exposed-modules:     System.Unix.IO.Text
+  exposed-modules:     System.Unix.IO.String
+  exposed-modules:     System.Unix.IO.Text
   exposed-modules:     System.Unix.IO.ByteString
   -- other-modules:       
   other-extensions:    FlexibleInstances
